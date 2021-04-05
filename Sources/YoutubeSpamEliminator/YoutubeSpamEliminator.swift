@@ -22,20 +22,9 @@ final class YoutubeSpamEliminator {
         guard let configData = fileManager.contents(atPath: configPath),
               let targets = Targets.deserialize(object: String(data: configData, encoding: .utf8)!) else {return EXIT_FAILURE}
         
-        // 各ターゲットについて動画及びコメントを取得
+        // 各ターゲットについて
         let channels = targets.channels
-        
-        channels.forEach { (channel) in
-            let sema = DispatchSemaphore(value: 0)
-            youtube.getCommentThread(channelId: channel.id, allThreadsRelatedToChannelId: channel.id, maxResults: 100, order: .relevance, textFormat: .plainText) { (result) in
-                print(result)
-                sema.signal()
-            } failure: { (error) in
-                print(error)
-                sema.signal()
-            }
-            sema.wait()
-        }
+
         
         return EXIT_SUCCESS
     }
